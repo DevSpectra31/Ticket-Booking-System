@@ -2,6 +2,7 @@ const nodemailer = require('nodemailer');
 const env = require('../../config/env');
 
 let transporter = null;
+let mailtrapTransporter = null;
 
 /**
  * Initialize email transporter based on EMAIL_MODE.
@@ -17,6 +18,7 @@ const getTransporter = () => {
     host: env.email.smtp.host,
     port: env.email.smtp.port,
     secure: env.email.smtp.port === 465,
+    family: 4, // Force IPv4 to prevent ENETUNREACH on IPv6-unsupported networks
     auth: {
       user: env.email.smtp.user,
       pass: env.email.smtp.pass,
@@ -24,6 +26,23 @@ const getTransporter = () => {
   });
 
   return transporter;
+};
+
+const getMailtrapTransporter = () => {
+  if (mailtrapTransporter) return mailtrapTransporter;
+
+  if (process.env.MAILTRAP_USER && process.env.MAILTRAP_PASS) {
+    mailtrapTransporter = nodemailer.createTransport({
+      host: 'sandbox.smtp.mailtrap.io',
+      port: 2525,
+      family: 4, // Force IPv4 to prevent ENETUNREACH
+      auth: {
+        user: process.env.MAILTRAP_USER,
+        pass: process.env.MAILTRAP_PASS,
+      },
+    });
+  }
+  return mailtrapTransporter;
 };
 
 /**
@@ -42,22 +61,69 @@ const sendEmail = async ({ to, subject, html, attachments = [] }) => {
     return { messageId: `mock-${Date.now()}` };
   }
 
-  const transport = getTransporter();
-  const info = await transport.sendMail({
-    from: env.email.from,
-    to,
-    subject,
-    html,
-    attachments,
-  });
+  let mainInfo = null;
+  const errors = [];
 
-  return info;
+  // 1. Send via main SMTP (Gmail)
+  try {
+    const transport = getTransporter();
+    mainInfo = await transport.sendMail({
+      from: env.email.from,
+      to,
+      subject,
+      html,
+      attachments,
+    });
+  } catch (err) {
+    console.error('Gmail Send Error:', err.message);
+    errors.push(err);
+  }
+
+  // 2. Send via Mailtrap (if credentials provided)
+  const mailtrapTransport = getMailtrapTransporter();
+  if (mailtrapTransport) {
+    try {
+      await mailtrapTransport.sendMail({
+        from: 'no-reply@ticketbooking.local',
+        to,
+        subject,
+        html,
+        attachments,
+      });
+      console.log('✅ Secondary copy successfully sent to Mailtrap Sandbox!');
+    } catch (err) {
+      console.error('Mailtrap Send Error:', err.message);
+    }
+  }
+
+  if (errors.length > 0 && !mainInfo) {
+    throw errors[0];
+  }
+
+  return mainInfo;
 };
 
 /**
  * Send booking confirmation email with QR code.
  */
 const sendBookingConfirmation = async ({ to, bookingRef, eventTitle, seats, totalAmount, eventDate, eventTime, qrCode }) => {
+  const attachments = [];
+  let qrImgSrc = '';
+
+  if (qrCode) {
+    if (qrCode.startsWith('data:image/png;base64,')) {
+      attachments.push({
+        filename: 'qrcode.png',
+        content: qrCode.split('base64,')[1],
+        encoding: 'base64',
+        cid: 'booking-qrcode',
+      });
+      qrImgSrc = 'cid:booking-qrcode';
+    } else {
+      qrImgSrc = qrCode;
+    }
+  }
+
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #1a1a2e; color: #eee; padding: 30px; border-radius: 12px;">
       <h1 style="color: #e94560; text-align: center;">🎟️ Booking Confirmed!</h1>
@@ -69,12 +135,12 @@ const sendBookingConfirmation = async ({ to, bookingRef, eventTitle, seats, tota
         <p><strong>Seats:</strong> ${seats}</p>
         <p><strong>Total Amount:</strong> ₹${totalAmount}</p>
       </div>
-      ${qrCode ? `<div style="text-align: center; margin: 20px 0;"><img src="${qrCode}" alt="QR Code" style="width: 200px; height: 200px;" /></div>` : ''}
+      ${qrImgSrc ? `<div style="text-align: center; margin: 20px 0;"><img src="${qrImgSrc}" alt="QR Code" style="width: 200px; height: 200px;" /></div>` : ''}
       <p style="text-align: center; color: #888; font-size: 12px;">Please present this QR code at the venue for entry.</p>
     </div>
   `;
 
-  return sendEmail({ to, subject: `Booking Confirmed - ${bookingRef}`, html });
+  return sendEmail({ to, subject: `Booking Confirmed - ${bookingRef}`, html, attachments });
 };
 
 /**

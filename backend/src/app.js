@@ -10,6 +10,9 @@ const errorHandler = require('./middleware/errorMiddleware');
 
 const app = express();
 
+// Disable HTTP caching (ETags) so all requests return 200 OK instead of 304 Not Modified
+app.disable('etag');
+
 // Security middleware
 app.use(helmet());
 app.use(cors(corsOptions));

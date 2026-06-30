@@ -12,7 +12,7 @@ const AppError = require('../../utils/appError');
 /**
  * Confirm a booking from a valid active hold.
  */
-const confirmBooking = async (holdId, userId) => {
+const confirmBooking = async (holdId, userId, promoCode = '') => {
   const hold = await SeatHold.findById(holdId).populate('seats');
   if (!hold) throw new AppError('Hold not found', 404);
 
@@ -37,7 +37,18 @@ const confirmBooking = async (holdId, userId) => {
       .populate('category', 'price name')
       .session(session);
 
-    const totalAmount = seats.reduce((sum, seat) => sum + (seat.category?.price || 0), 0);
+    let discount = 0;
+    if (promoCode) {
+      const code = promoCode.toUpperCase();
+      if (code === 'RESERVEX20') {
+        discount = 0.20; // 20%
+      } else if (code === 'WELCOME10') {
+        discount = 0.10; // 10%
+      }
+    }
+
+    const baseAmount = seats.reduce((sum, seat) => sum + (seat.category?.price || 0), 0);
+    const totalAmount = Math.round(baseAmount * (1 - discount));
 
     // Get event and user for QR/email
     const event = await Event.findById(hold.event).session(session);

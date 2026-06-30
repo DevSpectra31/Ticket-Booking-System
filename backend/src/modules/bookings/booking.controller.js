@@ -3,8 +3,8 @@ const ApiResponse = require('../../utils/apiResponse');
 const asyncHandler = require('../../utils/asyncHandler');
 
 const confirmBooking = asyncHandler(async (req, res) => {
-  const { holdId } = req.body;
-  const booking = await bookingService.confirmBooking(holdId, req.user._id);
+  const { holdId, promoCode } = req.body;
+  const booking = await bookingService.confirmBooking(holdId, req.user._id, promoCode);
   ApiResponse.created(res, booking, 'Booking confirmed successfully');
 });
 

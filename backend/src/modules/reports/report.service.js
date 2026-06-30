@@ -99,12 +99,24 @@ const getOrganiserReport = async (userId) => {
     bookedSeats,
     waitlistCount,
     totalRevenue,
-    events: events.map((e) => ({
-      _id: e._id,
-      title: e.title,
-      status: e.status,
-      eventDate: e.eventDate,
-    })),
+    events: await Promise.all(
+      events.map(async (e) => {
+        const bookingsCount = await Booking.countDocuments({ event: e._id, status: 'CONFIRMED' });
+        const revResult = await Booking.aggregate([
+          { $match: { event: e._id, status: 'CONFIRMED' } },
+          { $group: { _id: null, total: { $sum: '$totalAmount' } } },
+        ]);
+        const revenue = revResult.length > 0 ? revResult[0].total : 0;
+        return {
+          _id: e._id,
+          title: e.title,
+          status: e.status,
+          eventDate: e.eventDate,
+          bookingsCount,
+          revenue,
+        };
+      })
+    ),
   };
 };
 
@@ -112,7 +124,7 @@ const getOrganiserReport = async (userId) => {
  * Get admin-level system summary.
  */
 const getAdminReport = async () => {
-  const [totalEvents, totalBookings, cancelledBookings, totalSeats, bookedSeats, waitlistCount] =
+  const [totalEvents, totalBookings, cancelledBookings, totalSeats, bookedSeats, waitlistCount, events] =
     await Promise.all([
       Event.countDocuments(),
       Booking.countDocuments({ status: 'CONFIRMED' }),
@@ -120,6 +132,7 @@ const getAdminReport = async () => {
       Seat.countDocuments(),
       Seat.countDocuments({ status: 'BOOKED' }),
       WaitlistEntry.countDocuments({ status: { $in: ['WAITING', 'OFFERED'] } }),
+      Event.find().limit(6), // fetch first 6 events for general dashboard charts
     ]);
 
   const revenueResult = await Booking.aggregate([
@@ -137,6 +150,24 @@ const getAdminReport = async () => {
     bookedSeats,
     waitlistCount,
     totalRevenue,
+    events: await Promise.all(
+      events.map(async (e) => {
+        const bookingsCount = await Booking.countDocuments({ event: e._id, status: 'CONFIRMED' });
+        const revResult = await Booking.aggregate([
+          { $match: { event: e._id, status: 'CONFIRMED' } },
+          { $group: { _id: null, total: { $sum: '$totalAmount' } } },
+        ]);
+        const revenue = revResult.length > 0 ? revResult[0].total : 0;
+        return {
+          _id: e._id,
+          title: e.title,
+          status: e.status,
+          eventDate: e.eventDate,
+          bookingsCount,
+          revenue,
+        };
+      })
+    ),
   };
 };
 
