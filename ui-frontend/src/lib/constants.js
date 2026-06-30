@@ -1,0 +1,34 @@
+export const ROLES = {
+  CUSTOMER: 'CUSTOMER',
+  ORGANISER: 'ORGANISER',
+  ADMIN: 'ADMIN',
+};
+
+export const SEAT_STATUS = {
+  AVAILABLE: 'AVAILABLE',
+  HELD: 'HELD',
+  BOOKED: 'BOOKED',
+  BLOCKED: 'BLOCKED',
+};
+
+export const SEAT_COLORS = {
+  AVAILABLE: '#22c55e',
+  HELD: '#f59e0b',
+  BOOKED: '#6b7280',
+  BLOCKED: '#ef4444',
+  SELECTED: '#3b82f6',
+};
+
+export const BOOKING_STATUS = {
+  CONFIRMED: 'CONFIRMED',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED',
+};
+
+export const EVENT_STATUS = {
+  UPCOMING: 'UPCOMING',
+  ACTIVE: 'ACTIVE',
+  SOLD_OUT: 'SOLD_OUT',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+};
