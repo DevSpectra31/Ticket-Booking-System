@@ -22,7 +22,7 @@ beforeAll(async () => {
   const registerRes = await request(app).post('/api/auth/register').send({
     fullName: 'Test Booking Customer',
     email: 'test-booking-customer@example.com',
-    password: 'password123',
+    password: 'Password123',
     role: 'CUSTOMER',
   });
   customerToken = registerRes.body.data.token;
@@ -31,7 +31,7 @@ beforeAll(async () => {
   const orgRes = await request(app).post('/api/auth/register').send({
     fullName: 'Test Booking Organiser',
     email: 'test-booking-organiser@example.com',
-    password: 'password123',
+    password: 'Password123',
     role: 'ORGANISER',
   });
   const orgToken = orgRes.body.data.token;
