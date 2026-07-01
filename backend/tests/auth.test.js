@@ -18,7 +18,7 @@ describe('Auth API', () => {
   const testUser = {
     fullName: 'Test Auth User',
     email: 'test-auth@example.com',
-    password: 'password123',
+    password: 'Password123',
     role: 'CUSTOMER',
   };
 
@@ -66,7 +66,7 @@ describe('Auth API', () => {
     it('should reject non-existent email', async () => {
       const res = await request(app)
         .post('/api/auth/login')
-        .send({ email: 'nobody@example.com', password: 'password123' });
+        .send({ email: 'nobody@example.com', password: 'Password123' });
       expect(res.status).toBe(401);
     });
   });

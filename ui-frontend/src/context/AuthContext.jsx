@@ -7,12 +7,8 @@ import { getToken, setToken, removeToken, getUser, setUser as saveUser } from '@
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  // Initialize from localStorage for instant auth state (no loading flash)
-  const [user, setUser] = useState(() => getUser());
-  const [loading, setLoading] = useState(() => {
-    // If we have a cached user, skip loading state
-    return !getUser();
-  });
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const loadUser = useCallback(async () => {
     const token = getToken();
@@ -35,6 +31,11 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    const cachedUser = getUser();
+    if (cachedUser) {
+      setUser(cachedUser);
+      setLoading(false);
+    }
     loadUser();
   }, [loadUser]);
 

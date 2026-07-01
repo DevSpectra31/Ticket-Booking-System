@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const env = require('../../config/env');
+const { generateTicketPDF } = require('./pdf.service');
 
 let transporter = null;
 let mailtrapTransporter = null;
@@ -122,6 +123,26 @@ const sendBookingConfirmation = async ({ to, bookingRef, eventTitle, seats, tota
     } else {
       qrImgSrc = qrCode;
     }
+  }
+
+  // Generate and attach PDF ticket
+  try {
+    const pdfBuffer = await generateTicketPDF({
+      bookingRef,
+      eventTitle,
+      seats,
+      totalAmount,
+      eventDate,
+      eventTime,
+      qrCode,
+    });
+    attachments.push({
+      filename: `ticket-${bookingRef}.pdf`,
+      content: pdfBuffer,
+      contentType: 'application/pdf',
+    });
+  } catch (pdfErr) {
+    console.error('Failed to generate PDF ticket:', pdfErr);
   }
 
   const html = `

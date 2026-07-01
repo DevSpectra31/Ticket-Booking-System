@@ -7,6 +7,7 @@
   --bg-card: #1a1a3e;
   --bg-card-hover: #222255;
   --bg-glass: rgba(26, 26, 62, 0.7);
+  --bg-navbar: rgba(10, 10, 26, 0.9);
   --bg-input: #16163a;
   --border-color: rgba(255, 255, 255, 0.08);
   --border-glow: rgba(139, 92, 246, 0.3);
@@ -58,6 +59,7 @@ body.light-theme {
   --bg-card: #ffffff;
   --bg-card-hover: #f1f5f9;
   --bg-glass: rgba(255, 255, 255, 0.75);
+  --bg-navbar: rgba(255, 255, 255, 0.9);
   --bg-input: #f1f5f9;
   --border-color: rgba(0, 0, 0, 0.08);
   --border-glow: rgba(139, 92, 246, 0.25);
@@ -334,7 +336,7 @@ textarea.form-input {
 
 /* Navbar */
 .navbar {
-  background: rgba(10, 10, 26, 0.9);
+  background: var(--bg-navbar);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-color);
   position: sticky;
