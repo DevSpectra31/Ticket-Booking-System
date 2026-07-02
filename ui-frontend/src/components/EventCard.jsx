@@ -30,6 +30,11 @@ export default function EventCard({ event }) {
       className="card card-clickable event-card fade-in"
       onClick={() => router.push(`/events/${event._id}`)}
     >
+      {/* Shine Effect Overlay */}
+      <div className="card-shine-container">
+        <div className="card-shine" />
+      </div>
+
       <div className="event-card-image-wrapper">
         <img
           src={event.posterUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500'}

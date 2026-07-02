@@ -38,8 +38,8 @@ export default function SeatGrid({ seats, selectedSeats, onSeatClick, currentUse
 
       {Object.entries(rows)
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([rowLabel, rowSeats]) => (
-          <div key={rowLabel} className="seat-row">
+        .map(([rowLabel, rowSeats], rowIndex) => (
+          <div key={rowLabel} className="seat-row fade-in" style={{ animationDelay: `${rowIndex * 0.04}s`, opacity: 0 }}>
             <span className="seat-row-label">{rowLabel}</span>
             {rowSeats.map((seat) => (
               <button

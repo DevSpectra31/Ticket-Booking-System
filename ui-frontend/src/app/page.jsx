@@ -5,6 +5,7 @@ import Link from 'next/link';
 import api from '@/lib/api';
 import EventCard from '@/components/EventCard';
 import Loading from '@/components/Loading';
+import SkeletonCard from '@/components/SkeletonCard';
 
 export default function HomePage() {
   const [events, setEvents] = useState([]);
@@ -30,11 +31,11 @@ export default function HomePage() {
       <section className="hero">
         <div className="container">
           <h1 className="slide-up">Book Your<br />Next Experience</h1>
-          <p className="fade-in">
+          <p className="fade-in delay-1">
             Discover amazing events, select your perfect seats, and book instantly
             with real-time availability and QR code tickets.
           </p>
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }} className="fade-in">
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }} className="fade-in delay-2">
             <Link href="/events" className="btn btn-primary btn-lg">
               Browse Events →
             </Link>
@@ -53,7 +54,11 @@ export default function HomePage() {
         </div>
 
         {loading ? (
-          <Loading />
+          <div className="grid-3">
+            {[1, 2, 3].map((n) => (
+              <SkeletonCard key={n} />
+            ))}
+          </div>
         ) : events.length > 0 ? (
           <div className="grid-3">
             {events.map((event, i) => (

@@ -6,6 +6,7 @@ const seatRoutes = require('../modules/seats/seat.routes');
 const holdRoutes = require('../modules/holds/hold.routes');
 const bookingRoutes = require('../modules/bookings/booking.routes');
 const waitlistRoutes = require('../modules/waitlist/waitlist.routes');
+const venueRoutes = require('../modules/venues/venue.routes');
 const reportRoutes = require('../modules/reports/report.routes');
 const authenticate = require('../middleware/authMiddleware');
 const authorise = require('../middleware/roleMiddleware');
@@ -36,6 +37,9 @@ router.use('/bookings', bookingRoutes);
 
 // Waitlist routes
 router.use('/waitlist', waitlistRoutes);
+
+// Venue routes
+router.use('/venues', venueRoutes);
 
 // Report routes
 router.use('/reports', reportRoutes);

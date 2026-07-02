@@ -9,6 +9,7 @@ export default function Navbar() {
   const { user, isAuthenticated, isOrganiser, isAdmin, logout } = useAuth();
   const pathname = usePathname();
   const [theme, setTheme] = useState('dark');
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -18,6 +19,21 @@ export default function Navbar() {
     } else {
       document.body.classList.remove('light-theme');
     }
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalScroll > 0) {
+        const progress = (window.scrollY / totalScroll) * 100;
+        setScrollProgress(progress);
+      } else {
+        setScrollProgress(0);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const toggleTheme = () => {
@@ -35,6 +51,8 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
+      {/* Scroll Progress Indicator */}
+      <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
       <div className="navbar-inner">
         <Link href="/" className="navbar-brand">
           ⚡ ReserveX

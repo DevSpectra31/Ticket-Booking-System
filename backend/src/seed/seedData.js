@@ -7,6 +7,7 @@ const User = require('../modules/users/user.model');
 const Event = require('../modules/events/event.model');
 const SeatCategory = require('../modules/seats/seatCategory.model');
 const Seat = require('../modules/seats/seat.model');
+const Venue = require('../modules/venues/venue.model');
 
 const runSeed = async () => {
   try {
@@ -18,6 +19,7 @@ const runSeed = async () => {
       Event.collection.drop().catch(() => {}),
       SeatCategory.collection.drop().catch(() => {}),
       Seat.collection.drop().catch(() => {}),
+      Venue.collection.drop().catch(() => {}),
     ]);
     console.log('   Cleared existing data and legacy indexes');
 
@@ -45,6 +47,291 @@ const runSeed = async () => {
     console.log('   ✅ Created 3 users');
 
     const organiser = users[1];
+
+    // Seed Venues
+    const venues = await Venue.create([
+      {
+        name: 'IMAX Cinema Hall, Mumbai',
+        location: 'Mumbai',
+        rowsCount: 9,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Premium', startRow: 'A', endRow: 'B' },
+          { name: 'Gold', startRow: 'C', endRow: 'E' },
+          { name: 'Silver', startRow: 'F', endRow: 'I' },
+        ],
+      },
+      {
+        name: 'Prasads IMAX, Hyderabad',
+        location: 'Hyderabad',
+        rowsCount: 9,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Premium', startRow: 'A', endRow: 'B' },
+          { name: 'Gold', startRow: 'C', endRow: 'E' },
+          { name: 'Silver', startRow: 'F', endRow: 'I' },
+        ],
+      },
+      {
+        name: 'PVR Director\'s Cut, Delhi',
+        location: 'Delhi',
+        rowsCount: 9,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Premium', startRow: 'A', endRow: 'B' },
+          { name: 'Gold', startRow: 'C', endRow: 'E' },
+          { name: 'Silver', startRow: 'F', endRow: 'I' },
+        ],
+      },
+      {
+        name: 'DY Patil Stadium, Navi Mumbai',
+        location: 'Navi Mumbai',
+        rowsCount: 15,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'VIP', startRow: 'A', endRow: 'B' },
+          { name: 'Gold', startRow: 'C', endRow: 'E' },
+          { name: 'Silver', startRow: 'F', endRow: 'J' },
+          { name: 'Standard', startRow: 'K', endRow: 'O' },
+        ],
+      },
+      {
+        name: 'Jawaharlal Nehru Stadium, Delhi',
+        location: 'Delhi',
+        rowsCount: 15,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'VIP', startRow: 'A', endRow: 'B' },
+          { name: 'Gold', startRow: 'C', endRow: 'E' },
+          { name: 'Silver', startRow: 'F', endRow: 'J' },
+          { name: 'Standard', startRow: 'K', endRow: 'O' },
+        ],
+      },
+      {
+        name: 'Phoenix Arena, Chennai',
+        location: 'Chennai',
+        rowsCount: 15,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'VIP', startRow: 'A', endRow: 'B' },
+          { name: 'Gold', startRow: 'C', endRow: 'E' },
+          { name: 'Silver', startRow: 'F', endRow: 'J' },
+          { name: 'Standard', startRow: 'K', endRow: 'O' },
+        ],
+      },
+      {
+        name: 'Siri Fort Auditorium, Delhi',
+        location: 'Delhi',
+        rowsCount: 5,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Front Row', startRow: 'A', endRow: 'A' },
+          { name: 'Standard', startRow: 'B', endRow: 'E' },
+        ],
+      },
+      {
+        name: 'St. Andrew\'s Auditorium, Mumbai',
+        location: 'Mumbai',
+        rowsCount: 5,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Front Row', startRow: 'A', endRow: 'A' },
+          { name: 'Standard', startRow: 'B', endRow: 'E' },
+        ],
+      },
+      {
+        name: 'NSCI Dome, Mumbai',
+        location: 'Mumbai',
+        rowsCount: 18,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Pavilion VIP', startRow: 'A', endRow: 'B' },
+          { name: 'Club House', startRow: 'C', endRow: 'E' },
+          { name: 'Premium Stand', startRow: 'F', endRow: 'J' },
+          { name: 'General Stand', startRow: 'K', endRow: 'R' },
+        ],
+      },
+      {
+        name: 'Narendra Modi Stadium, Ahmedabad',
+        location: 'Ahmedabad',
+        rowsCount: 18,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Pavilion VIP', startRow: 'A', endRow: 'B' },
+          { name: 'Club House', startRow: 'C', endRow: 'E' },
+          { name: 'Premium Stand', startRow: 'F', endRow: 'J' },
+          { name: 'General Stand', startRow: 'K', endRow: 'R' },
+        ],
+      },
+      {
+        name: 'M. Chinnaswamy Stadium, Bangalore',
+        location: 'Bangalore',
+        rowsCount: 18,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Pavilion VIP', startRow: 'A', endRow: 'B' },
+          { name: 'Club House', startRow: 'C', endRow: 'E' },
+          { name: 'Premium Stand', startRow: 'F', endRow: 'J' },
+          { name: 'General Stand', startRow: 'K', endRow: 'R' },
+        ],
+      },
+      {
+        name: 'Salt Lake Stadium, Kolkata',
+        location: 'Kolkata',
+        rowsCount: 18,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Pavilion VIP', startRow: 'A', endRow: 'B' },
+          { name: 'Club House', startRow: 'C', endRow: 'E' },
+          { name: 'Premium Stand', startRow: 'F', endRow: 'J' },
+          { name: 'General Stand', startRow: 'K', endRow: 'R' },
+        ],
+      },
+      {
+        name: 'Royal Opera House, Mumbai',
+        location: 'Mumbai',
+        rowsCount: 13,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Royal Box', startRow: 'A', endRow: 'A' },
+          { name: 'Dress Circle', startRow: 'B', endRow: 'D' },
+          { name: 'Balcony', startRow: 'E', endRow: 'H' },
+          { name: 'Stalls', startRow: 'I', endRow: 'M' },
+        ],
+      },
+      {
+        name: 'Kingdom of Dreams, Gurugram',
+        location: 'Gurugram',
+        rowsCount: 13,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Royal Box', startRow: 'A', endRow: 'A' },
+          { name: 'Dress Circle', startRow: 'B', endRow: 'D' },
+          { name: 'Balcony', startRow: 'E', endRow: 'H' },
+          { name: 'Stalls', startRow: 'I', endRow: 'M' },
+        ],
+      },
+      {
+        name: 'Ranga Shankara, Bangalore',
+        location: 'Bangalore',
+        rowsCount: 13,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Royal Box', startRow: 'A', endRow: 'A' },
+          { name: 'Dress Circle', startRow: 'B', endRow: 'D' },
+          { name: 'Balcony', startRow: 'E', endRow: 'H' },
+          { name: 'Stalls', startRow: 'I', endRow: 'M' },
+        ],
+      },
+      {
+        name: 'Jio World Centre, Mumbai',
+        location: 'Mumbai',
+        rowsCount: 18,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'All-Access Pass', startRow: 'A', endRow: 'B' },
+          { name: 'Standard Pass', startRow: 'C', endRow: 'H' },
+          { name: 'Virtual Pass', startRow: 'I', endRow: 'R' },
+        ],
+      },
+      {
+        name: 'Bangalore International Exhibition Centre',
+        location: 'Bangalore',
+        rowsCount: 18,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'All-Access Pass', startRow: 'A', endRow: 'B' },
+          { name: 'Standard Pass', startRow: 'C', endRow: 'H' },
+          { name: 'Virtual Pass', startRow: 'I', endRow: 'R' },
+        ],
+      },
+      {
+        name: 'HICC, Hyderabad',
+        location: 'Hyderabad',
+        rowsCount: 18,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'All-Access Pass', startRow: 'A', endRow: 'B' },
+          { name: 'Standard Pass', startRow: 'C', endRow: 'H' },
+          { name: 'Virtual Pass', startRow: 'I', endRow: 'R' },
+        ],
+      },
+      {
+        name: 'Vagator Beach, Goa',
+        location: 'Goa',
+        rowsCount: 18,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'VIP Lounge', startRow: 'A', endRow: 'C' },
+          { name: 'Early Bird', startRow: 'D', endRow: 'H' },
+          { name: 'General Admission', startRow: 'I', endRow: 'R' },
+        ],
+      },
+      {
+        name: 'Mahalaxmi Lawns, Pune',
+        location: 'Pune',
+        rowsCount: 18,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'VIP Lounge', startRow: 'A', endRow: 'C' },
+          { name: 'Early Bird', startRow: 'D', endRow: 'H' },
+          { name: 'General Admission', startRow: 'I', endRow: 'R' },
+        ],
+      },
+      {
+        name: 'KTPO Convention Centre, Bangalore',
+        location: 'Bangalore',
+        rowsCount: 18,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'VIP Lounge', startRow: 'A', endRow: 'C' },
+          { name: 'Early Bird', startRow: 'D', endRow: 'H' },
+          { name: 'General Admission', startRow: 'I', endRow: 'R' },
+        ],
+      },
+      {
+        name: 'National Gallery of Modern Art, Delhi',
+        location: 'Delhi',
+        rowsCount: 9,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Premium Experience', startRow: 'A', endRow: 'C' },
+          { name: 'Standard Entry', startRow: 'D', endRow: 'I' },
+        ],
+      },
+      {
+        name: 'NSIC Exhibition Grounds, Delhi',
+        location: 'Delhi',
+        rowsCount: 9,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Premium Experience', startRow: 'A', endRow: 'C' },
+          { name: 'Standard Entry', startRow: 'D', endRow: 'I' },
+        ],
+      },
+      {
+        name: 'Science City, Kolkata',
+        location: 'Kolkata',
+        rowsCount: 9,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Premium Experience', startRow: 'A', endRow: 'C' },
+          { name: 'Standard Entry', startRow: 'D', endRow: 'I' },
+        ],
+      },
+      {
+        name: 'Parmarth Niketan, Rishikesh',
+        location: 'Rishikesh',
+        rowsCount: 11,
+        seatsPerRow: 10,
+        categories: [
+          { name: 'Full Retreat', startRow: 'A', endRow: 'B' },
+          { name: 'Day Pass', startRow: 'C', endRow: 'G' },
+          { name: 'Single Session', startRow: 'H', endRow: 'K' },
+        ],
+      },
+    ]);
+    console.log(`   ✅ Created ${venues.length} venues`);
 
     // ──────────────────────────────────────────────
     //  25 Diverse Events
@@ -295,7 +582,14 @@ const runSeed = async () => {
     ];
 
     const events = await Event.create(
-      eventsData.map((e) => ({ ...e, createdBy: organiser._id }))
+      eventsData.map((e) => {
+        const venueObj = venues.find((v) => v.name === e.venue);
+        return {
+          ...e,
+          venueId: venueObj ? venueObj._id : null,
+          createdBy: organiser._id,
+        };
+      })
     );
     console.log(`   ✅ Created ${events.length} events`);
 
