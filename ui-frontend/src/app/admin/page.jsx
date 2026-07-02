@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import api from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import Loading from '@/components/Loading';
@@ -34,9 +35,14 @@ export default function AdminDashboard() {
   return (
     <ProtectedRoute roles={['ADMIN']}>
       <div className="page-container">
-        <div className="page-header">
-          <h1>🛡️ Admin Dashboard</h1>
-          <p>System-wide overview and management</p>
+        <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          <div>
+            <h1>🛡️ Admin Dashboard</h1>
+            <p>System-wide overview and management</p>
+          </div>
+          <Link href="/admin/venues" className="btn btn-primary">
+            🏟️ Manage Venues Templates
+          </Link>
         </div>
 
         {loading ? (

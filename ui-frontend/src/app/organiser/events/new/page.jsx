@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import ErrorMessage from '@/components/ErrorMessage';
@@ -9,14 +9,53 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 export default function CreateEventPage() {
   const router = useRouter();
   const [form, setForm] = useState({
-    title: '', description: '', venue: '', eventDate: '', eventTime: '', posterUrl: '', status: 'UPCOMING',
+    title: '', description: '', venue: '', venueId: '', eventDate: '', eventTime: '', posterUrl: '', status: 'UPCOMING',
   });
+  const [venues, setVenues] = useState([]);
   const [categories, setCategories] = useState([{ name: 'Standard', price: 100, totalSeats: 50 }]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [step, setStep] = useState(1);
 
+  useEffect(() => {
+    const fetchVenues = async () => {
+      try {
+        const res = await api.get('/venues');
+        setVenues(res.data.data || []);
+      } catch (err) {
+        console.error('Failed to load venues:', err);
+      }
+    };
+    fetchVenues();
+  }, []);
+
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleVenueChange = (e) => {
+    const vId = e.target.value;
+    if (!vId) {
+      setForm({ ...form, venue: '', venueId: '' });
+      return;
+    }
+    const selectedVenue = venues.find((v) => v._id === vId);
+    if (selectedVenue) {
+      setForm({ ...form, venue: selectedVenue.name, venueId: selectedVenue._id });
+      // Prepopulate categories based on the selected venue's row layout range!
+      const populatedCategories = selectedVenue.categories.map((cat) => {
+        const startCode = cat.startRow.charCodeAt(0);
+        const endCode = cat.endRow.charCodeAt(0);
+        const rowsInCat = endCode - startCode + 1;
+        const totalSeats = rowsInCat * selectedVenue.seatsPerRow;
+        
+        return {
+          name: cat.name,
+          price: cat.name.toLowerCase().includes('premium') || cat.name.toLowerCase().includes('vip') ? 500 : 150,
+          totalSeats: totalSeats,
+        };
+      });
+      setCategories(populatedCategories);
+    }
+  };
 
   const handleCategoryChange = (index, field, value) => {
     const updated = [...categories];
@@ -77,8 +116,15 @@ export default function CreateEventPage() {
                 <textarea name="description" className="form-input" placeholder="Describe your event..." value={form.description} onChange={handleChange} required />
               </div>
               <div className="form-group">
-                <label>Venue *</label>
-                <input name="venue" className="form-input" placeholder="e.g. IMAX Cinema Hall, Mumbai" value={form.venue} onChange={handleChange} required />
+                <label>Venue (Select Admin Layout Template) *</label>
+                <select name="venueId" className="form-input" value={form.venueId} onChange={handleVenueChange} required>
+                  <option value="">-- Choose a Venue Layout --</option>
+                  {venues.map((v) => (
+                    <option key={v._id} value={v._id}>
+                      {v.name} ({v.location}) — {v.rowsCount * v.seatsPerRow} seats
+                    </option>
+                  ))}
+                </select>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div className="form-group">

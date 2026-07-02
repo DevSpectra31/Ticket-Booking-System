@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 import EventCard from '@/components/EventCard';
 import Loading from '@/components/Loading';
+import SkeletonCard from '@/components/SkeletonCard';
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
@@ -71,7 +72,11 @@ export default function EventsPage() {
 
       {/* Events Grid */}
       {loading ? (
-        <Loading />
+        <div className="grid-3">
+          {[1, 2, 3, 4, 5, 6].map((n) => (
+            <SkeletonCard key={n} />
+          ))}
+        </div>
       ) : events.length > 0 ? (
         <div className="grid-3">
           {events.map((event, i) => (

@@ -46,6 +46,11 @@ const eventSchema = new mongoose.Schema(
       trim: true,
       maxlength: 300,
     },
+    venueId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Venue',
+      default: null,
+    },
     eventDate: {
       type: Date,
       required: [true, 'Event date is required'],
