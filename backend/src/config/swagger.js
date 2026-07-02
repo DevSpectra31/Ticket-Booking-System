@@ -14,9 +14,13 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:${env.port}`,
-        description: 'Development server',
-      },
+        url: process.env.NODE_ENV === 'production'
+          ? "https://ticket-booking-system-w0jc.onrender.com"
+          : "http://localhost:8080",
+        description: process.env.NODE_ENV === 'production'
+          ? "Production server"
+          : "Development server"
+      }
     ],
     components: {
       securitySchemes: {
